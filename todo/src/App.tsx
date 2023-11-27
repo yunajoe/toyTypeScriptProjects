@@ -8,7 +8,6 @@ interface Todo {
 }
 
 function App() {
-  // value 타입이 string이다
   const [value, setValue] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([]);
 
@@ -18,19 +17,28 @@ function App() {
     setValue(e.target.value);
   };
 
-  // onClick function이라두 parameter를 전달안 하면은 에러가 안 난다
-  //  <button onClick={addTodo}>AddTodo</button>
   const addTodo = (): void => {
     const id = uuidv4();
     setTodos([...todos, { id: id, todo: value, completed: false }]);
     setValue("");
   };
 
-  // onclick function인데 parameter를 전달하면은 Types of parameters 'todo' and 'event' are incompatible. 에레남
-  //  <button onClick={completedTodo}>    {todo.completed ? "completed" : "incompleted"}   </button>
-  const completedTodo = (todo: Todo): void => {
-    todo.completed = true;
-    setTodos([...todos, todo]);
+  // 1차시도 => setter에다가 안했기 떄문에 App이 실행되지 않아서, input에 값을 넣어줬을떄(APP이 다시 실행되었을떄) completed로 변환이 된다
+  // const completedTodo = (todo: Todo): void => {
+  //   todo.completed = true;
+  // };
+
+  // 2차시도 => 아래처럼 하면은 새롭게 todo가 생긴다
+  // const completedTodo = (todo: Todo): void => {
+  //   setTodos([...todos, { id: todo.id, todo: todo.todo, completed: true }]);
+  // };
+
+  const completedTodo = (todo: Todo) => {
+    setTodos((prev) => {
+      return prev.map((item) =>
+        item.id === todo.id ? { ...item, completed: !todo.completed } : item
+      );
+    });
   };
 
   return (
@@ -43,7 +51,6 @@ function App() {
           style={{ textDecoration: todo.completed ? "line-through" : "" }}
         >
           {todo.todo}
-          {/* <button onClick={completedTodo}> */}
           <button onClick={() => completedTodo(todo)}>
             {todo.completed ? "completed" : "incompleted"}
           </button>
