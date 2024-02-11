@@ -1,0 +1,45 @@
+$yellow: var(--dark-yellow);
+$grey: var(--light-grey);
+
+@mixin button-color($color) {
+  background-color: $color;
+  &:hover {
+    // background-color: lighten($color, 10%);
+  }
+  &:active {
+    // background-color: lighten($color, 10%);
+  }
+}
+
+.buttonContainer {
+  //  사이즈관리
+  // .buttonContainer.large
+  &.large {
+    height: 3rem;
+  }
+
+  &.medium {
+  }
+
+  &.small {
+  }
+
+  // 색상관리
+  &.yellow {
+    @include button-color($yellow);
+  }
+
+  &.grey {
+    @include button-color($grey);
+  }
+
+  // hover, active
+  &:hover {
+  }
+  &:active {
+  }
+  // .buttonContainer + .buttonContainer
+
+  & + & {
+  }
+}

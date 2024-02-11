@@ -1,0 +1,72 @@
+.container {
+  background-color: var(--dark-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 5rem;
+}
+
+.title {
+  font-size: 6rem;
+  font-weight: 900;
+  color: white;
+}
+
+.form__container {
+  color: white;
+  width: 50%;
+  font-size: 3rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+
+  & .fieldset {
+    font-size: 3rem;
+    border: 1px solid white;
+    // height: 4.5rem;
+    padding-left: 2rem;
+    // display: flex;
+    // flex-direction: column;
+  }
+}
+
+.budget__container {
+  display: flex;
+  column-gap: 1rem;
+
+  &.budget__input {
+    width: 100rem;
+  }
+}
+
+.dropdown__container {
+  display: flex;
+  column-gap: 1rem;
+}
+.dropdown {
+  display: flex;
+}
+
+// 버튼
+.button__container {
+  column-gap: 1rem;
+  display: flex;
+  height: 4rem;
+  & button {
+    font-size: 2rem;
+    background-color: var(--light-yellow);
+  }
+}
+
+// input
+input {
+  width: 33rem;
+  height: 3rem;
+}
+
+// new filed
+.new__field {
+  display: flex;
+  flex-direction: column;
+}
