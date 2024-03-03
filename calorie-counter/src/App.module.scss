@@ -26,7 +26,6 @@
     font-size: 3rem;
     border: 1px solid white;
     padding: 2rem;
-    // margin-bottom: 1rem;
   }
 }
 
@@ -39,12 +38,27 @@
   }
 }
 
-.dropdown__container {
+.controls {
+  position: relative;
   display: flex;
-  column-gap: 1rem;
-}
-.dropdown {
-  display: flex;
+  column-gap: 10rem;
+
+  list-style: none;
+  & label {
+    font-size: 1.6rem;
+  }
+  & .dropdown {
+    position: absolute;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    background-color: white;
+    color: black;
+    font-size: 2rem;
+    top: 0;
+    left: 16rem;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 // 버튼
@@ -54,8 +68,20 @@
   height: 4rem;
   & button {
     font-size: 2rem;
-    background-color: var(--light-yellow);
   }
+}
+
+// entry추가 버튼
+.add-entry {
+  min-height: 2.4rem;
+}
+
+// button공통
+button {
+  background-color: var(--light-yellow);
+  border: 2px solid var(--dark-yellow);
+  cursor: pointer;
+  text-decoration: none;
 }
 
 // input

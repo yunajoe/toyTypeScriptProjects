@@ -1,0 +1,8 @@
+.wrapper {
+  & li {
+  }
+  & li:hover {
+    background-color: var(--dark-blue);
+    color: white;
+  }
+}

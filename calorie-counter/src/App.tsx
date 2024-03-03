@@ -1,19 +1,13 @@
 import classNames from "classnames/bind";
-import { ChangeEvent, useReducer, useState } from "react";
+import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import styles from "./App.module.scss";
 import useInputs from "./hooks/useInputs";
-
-// version2 => input을 array에 담아서 사용하기
+import "react-dropdown/style.css";
+import DropDown from "./components/dropdown/DropDown";
 
 const cx = classNames.bind(styles);
 
-// type은 어려웡..
 function reducer(state: any, action: any) {
-  // action과 state는 한 템포의 차이가 있다!
-  // console.log("나는야 action", action, "나는야State", state);
-  // 여기에 있는 key들이 state.key 로 된다
-  // 예를 들어,   totalOutputCalorie: action.totalOutputCalorie 에서 왼쪽이 state.key가 되는것
-  // 질문: 왜 ....state,로해야만 정상작동이 되는가..?
   switch (action.type) {
     case "calculate_calorie": {
       return {
@@ -45,61 +39,75 @@ const initialState = {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [isClick, setIsClick] = useState(false);
+
+  // dropdown관련
+  const menus = ["BreakFast", "Lunch", "Dinner", "Snacks", "Exercises"];
+  const defaultOption = menus[0];
 
   // output관련..
   const [isOutPutOpen, setIsOutPutOpen] = useState(false);
   const [totalConsumedCalorie, setTotalConsumedCalorie] = useState(0);
   const [totalBurnedCalorie, setTotalBurnedCalorie] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { inputNames, addInput, selectedInput } = useInputs([
+  const { inputNames, addInput, selectedInput, handleChangeValue } = useInputs([
     "BreakFast",
     "Lunch",
     "Dinner",
-    "Snack",
+    "Snacks",
     "Exercises",
   ]);
 
-  // console.log(InputsArray.inputNames);
-  // const Input1 = useInput("BreakFast");
-  // const Input2 = useInput("Lunch");
-  // const Input3 = useInput("Dinner");
-  // const Input4 = useInput("Snack");
-  // const Input5 = useInput("Exercises");
+  // 칼로리 더하는 펑션
+  const calculateConsumeCalorie = () => {
+    return selectedInput.reduce((acc, input) => {
+      if (input.type === "number" && input.id !== "Exercises") {
+        acc += Number(input.value);
+      }
+      return acc;
+    }, 0);
+  };
 
-  // const calculateConsumeCalorie = () => {
-  //   const result = Input1.calorieSumFun();
-  //   const result2 = Input2.calorieSumFun();
-  //   const result3 = Input3.calorieSumFun();
-  //   const result4 = Input4.calorieSumFun();
-  //   const totalCalorie = result + result2 + result3 + result4;
-  //   setTotalConsumedCalorie(totalCalorie);
-  //   return totalCalorie;
-  // };
-
-  // const calculateBurnedCalorie = () => {
-  //   const result = Input5.calorieSumFun();
-  //   setTotalBurnedCalorie(result);
-  //   return result;
-  // };
+  // 칼로리 빼는 펑션
+  const calculateBurnedCalorie = () => {
+    return selectedInput.reduce((acc, input) => {
+      if (input.type === "number" && input.id === "Exercises") {
+        acc += Number(input.value);
+      }
+      return acc;
+    }, 0);
+  };
 
   //  총 칼로리 게산하기
-  // const handleCalculate = (
-  //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  // ) => {
-  //   e.preventDefault();
-  //   setIsOutPutOpen(true);
-  //   const consumedCalorie = calculateConsumeCalorie();
-  //   const burnedCalorie = calculateBurnedCalorie();
-  //   const result = Number(state.budgetValue) - consumedCalorie + burnedCalorie;
+  const handleCalculate = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setIsOutPutOpen(true);
+    const consumedCalorie = calculateConsumeCalorie();
+    const burnedCalorie = calculateBurnedCalorie();
 
-  //   dispatch({
-  //     type: "calculate_calorie",
-  //     totalOutputCalorie: result,
-  //   });
-  // };
+    setTotalConsumedCalorie(consumedCalorie);
+    setTotalBurnedCalorie(burnedCalorie);
 
-  // handleMenu
+    const result = Number(state.budgetValue) - consumedCalorie + burnedCalorie;
+    dispatch({
+      type: "calculate_calorie",
+      totalOutputCalorie: result,
+    });
+  };
+
+  interface InputObjIndex {
+    [key: string]: number[];
+  }
+  const InPutIndex: InputObjIndex = {
+    BreakFast: [],
+    Lunch: [],
+    Dinner: [],
+    Snacks: [],
+    Exercises: [],
+  };
+
   const handleMenuClick = (menu: string) => {
     dispatch({
       type: "selected_menu",
@@ -107,27 +115,15 @@ function App() {
     });
   };
 
-  interface InputObjInterface {
-    [key: string]: { label: string; type: string }[];
-  }
-  const InputObj: InputObjInterface = {
-    BreakFast: selectedInput,
-    Lunch: selectedInput,
-    Dinner: selectedInput,
-    Snacks: selectedInput,
-    Exercises: selectedInput,
-  };
-
+  // input값 추가하기 펑션
   const handleAddEntry = (e: any, selectedMenu: string, idx: number) => {
     e.preventDefault();
     inputNames.map((inputName: string) => {
       if (inputName === selectedMenu) {
-        addInput(idx);
+        addInput({ idx: idx, inputId: selectedMenu });
       }
     });
   };
-
-  console.log("선택된 메뉴", selectedInput);
 
   const handleBudget = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({
@@ -135,7 +131,21 @@ function App() {
       budgetValue: e.target.value,
     });
   };
-  // 문제 selectedMenu가 change가 되면은 이전에 선택되었떤 input값들이 옮겨간다..
+
+  const dropDownRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (e: any) => {
+    if (dropDownRef.current && !dropDownRef?.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  });
   return (
     <div className={cx("container")}>
       <h1 className={cx("title")}>Calorie Counter</h1>
@@ -145,81 +155,86 @@ function App() {
           <input
             className={cx("budget-input")}
             type="number"
-            min="0"
+            // min="0"
             placeholder="Daily calorie budget"
             onChange={handleBudget}
             value={state.budgetValue}
+            required
           />
         </div>
         {inputNames.map((inputName) => {
-          console.log("나는야 State", state.selectedValue);
           return (
             <div key={inputName}>
               <fieldset className={cx("fieldset")}>
                 <legend>{inputName}</legend>
                 <div className={cx("new__field")} id="input-field">
-                  {inputName === state.selectedValue &&
-                    selectedInput.map((input, idx) => {
-                      const { label, type } = input;
-
+                  {selectedInput.map((input, idx) => {
+                    if (input.id === inputName) {
+                      InPutIndex[inputName].push(idx);
+                      const { id, label, type } = input;
                       return (
                         <div key={idx} className={cx("input-container")}>
                           <label>{label}</label>
-                          <input type={type} />
+                          <input
+                            id={id}
+                            type={type}
+                            onBlur={(e) => handleChangeValue(e, input)}
+                          />
                         </div>
                       );
-                    })}
+                    }
+                  })}
                 </div>
               </fieldset>
             </div>
           );
         })}
+        <div className={cx("controls")}>
+          <label className={cx("label")}>Add food or exercise:</label>
+          <div
+            className={cx("dropdown")}
+            ref={dropDownRef}
+            onClick={(e) => {
+              setIsOpen(!isOpen);
+              handleOutsideClick(e);
+            }}
+          >
+            <p>{state.selectedValue}</p>
 
-        <div className={cx("dropdown__container")}>
-          <div className={cx("dropdown")} onClick={() => setIsClick(!isClick)}>
-            <p className={cx("dropdown__title")}>Add food or exercise:</p>
-            <div className={cx("dropdown")}>
-              <p>{state.selectedValue}</p>
-              {/* li태그는 element.target.value값이 없다 */}
-              {isClick && (
-                <ul>
-                  <li onClick={() => handleMenuClick("BreakFast")}>
-                    Breakfast
-                  </li>
-                  <li onClick={() => handleMenuClick("Lunch")}>Lunch</li>
-                  <li onClick={() => handleMenuClick("Dinner")}>Dinner</li>
-                  <li onClick={() => handleMenuClick("Snacks")}>Snacks</li>
-                  <li onClick={() => handleMenuClick("Exercises")}>
-                    Exercises
-                  </li>
-                </ul>
-              )}
-            </div>
+            {isOpen && (
+              <DropDown
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                menus={menus}
+                defaultOption={defaultOption}
+                handleMenuClick={handleMenuClick}
+              />
+            )}
           </div>
-          {/*인덱스스를, 1, 2...로 하는방법이 없을까유?*/}
           <button
-            onClick={(e) =>
+            className={cx("add-button")}
+            onClick={(e: any) => {
               handleAddEntry(
                 e,
                 state.selectedValue,
-                Math.floor(InputObj[state.selectedValue].length / 2) + 1
-              )
-            }
+                Math.floor(InPutIndex[state.selectedValue].length / 2) + 1
+              );
+            }}
           >
             AddEntry
           </button>
         </div>
         <div className={cx("button__container")}>
-          {/* button의 기본 default type은 submit */}
-          {/* form태그 내에서 button을 사용할때 타입 명시가 없다면 기본적으로 submit처리  따라서 새로고침 처리가 된다*/}
-          <button type="submit">Calculate Remaining Calories</button>
+          <button type="submit" onClick={handleCalculate}>
+            Calculate Remaining Calories
+          </button>
           <button>Clear</button>
         </div>
       </form>
       {isOutPutOpen && (
         <div className={cx("output-container")}>
           <span className={cx("result")}>
-            {state.totalOutputCalorie}
+            {state.totalOutputCalorie} Calorie
             {state.totalOutputCalorie > 0 ? "Deficit" : "SurPlus"}
           </span>
           <hr />
