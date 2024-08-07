@@ -10,11 +10,18 @@ interface Todo {
 function App() {
   const [value, setValue] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [editInputId, setEditInputId] = useState<string | null>(null);
+  const [editInputIdArr, setEditInputArr] = useState<Todo[]>([]);
+  const [editValue, setEditValue] = useState("");
 
-  // React.ChangeEvent: React에서 제공하는 이벤트 객체
-  // <HTMLInputElement>: 이벤트를 발생시키는 HTML 요소의 타입
+  const disable = value.trim().length === 0;
+
   const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+  };
+
+  const handleEditInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditValue(e.target.value);
   };
 
   const addTodo = (): void => {
@@ -23,15 +30,51 @@ function App() {
     setValue("");
   };
 
-  // 1차시도 => setter에다가 안했기 떄문에 App이 실행되지 않아서, input에 값을 넣어줬을떄(APP이 다시 실행되었을떄) completed로 변환이 된다
-  // const completedTodo = (todo: Todo): void => {
-  //   todo.completed = true;
-  // };
+  const editTodo = (todo: Todo) => {
+    setEditInputId(todo.id);
 
-  // 2차시도 => 아래처럼 하면은 새롭게 todo가 생긴다
-  // const completedTodo = (todo: Todo): void => {
-  //   setTodos([...todos, { id: todo.id, todo: todo.todo, completed: true }]);
-  // };
+    // 처음
+    const lastInputArray = editInputIdArr.at(-1);
+    if (!lastInputArray) {
+      setEditInputArr([...editInputIdArr, todo]);
+    }
+
+    // 그 이후..
+    if (lastInputArray && lastInputArray.id !== todo.id) {
+      setEditInputArr([todo]);
+      setEditValue("");
+    }
+  };
+
+  const deleteTodo = (todo: Todo) => {
+    const copyTodos = [...todos];
+    const filteredCopyTodos = copyTodos.filter((item) => item.id !== todo.id);
+    setTodos(filteredCopyTodos);
+  };
+
+  const handleCancel = () => {
+    setEditInputId("");
+    setEditValue("");
+    setEditInputArr([]);
+  };
+
+  const handleSave = (todo: Todo) => {
+    const editedTodo = {
+      ...todo,
+      todo: editValue,
+    };
+    const copyTodos = [...todos];
+    const editedTodoArray = copyTodos.map((item) => {
+      if (item.id === todo.id) {
+        return editedTodo;
+      }
+      return item;
+    });
+
+    setTodos(editedTodoArray);
+    setEditInputId("");
+    setEditValue("");
+  };
 
   const completedTodo = (todo: Todo) => {
     setTodos((prev) => {
@@ -42,20 +85,82 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <input type="text" value={value} onChange={handleInputValue} />
-      <button onClick={addTodo}>AddTodo</button>
-      {todos.map((todo) => (
-        <div
-          key={todo.id}
-          style={{ textDecoration: todo.completed ? "line-through" : "" }}
-        >
-          {todo.todo}
-          <button onClick={() => completedTodo(todo)}>
-            {todo.completed ? "completed" : "incompleted"}
+    <div className="flex justify-center w-screen h-screen bg-slate-300">
+      <div className="flex flex-col items-center w-4/5 pt-10 gap-y-6">
+        <div className="flex gap-10">
+          <input type="text" value={value} onChange={handleInputValue} />
+          <button
+            disabled={disable}
+            onClick={addTodo}
+            className={`p-2 border-2 border-solid ${
+              disable
+                ? "bg-gray-300 border-gray-400 cursor-not-allowed"
+                : "bg-blue-500 border-blue-500 hover:bg-blue-600 text-white"
+            }`}
+          >
+            AddTodo
           </button>
         </div>
-      ))}
+        {todos.map((todo) => (
+          <div key={todo.id} className="flex p-1.5 bg-blue-200">
+            <li className="flex gap-5 bg-blue-200">
+              <div className="flex gap-5">
+                <span
+                  style={{
+                    textDecoration: todo.completed ? "line-through" : "",
+                    display: todo.id === editInputId ? "none" : "block",
+                  }}
+                >
+                  {todo.todo}
+                </span>
+                {todo.id === editInputId && (
+                  <input
+                    value={editValue}
+                    onChange={handleEditInputValue}
+                    placeholder={todo.todo}
+                  />
+                )}
+                <button onClick={() => completedTodo(todo)}>
+                  {todo.completed ? "completed" : "incompleted"}
+                </button>
+              </div>
+              <button
+                className="text-white bg-blue-500"
+                onClick={() => deleteTodo(todo)}
+              >
+                삭제하기
+              </button>
+              <div>
+                <button
+                  className="text-white bg-gray-400"
+                  onClick={() => editTodo(todo)}
+                  style={{
+                    display: todo.id === editInputId ? "none" : "block",
+                  }}
+                >
+                  편집하기
+                </button>
+                {editInputId === todo.id && (
+                  <div className="flex gap-x-3">
+                    <button
+                      className="text-white bg-gray-400"
+                      onClick={handleCancel}
+                    >
+                      취소하기
+                    </button>
+                    <button
+                      className="text-white bg-gray-400"
+                      onClick={() => handleSave(todo)}
+                    >
+                      저장하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            </li>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
