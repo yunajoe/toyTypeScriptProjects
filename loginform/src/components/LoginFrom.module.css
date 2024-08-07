@@ -29,6 +29,7 @@
 .input__invalid {
   padding: 1rem;
   border-radius: 4px;
+  outline: none;
 }
 
 .input__valid {

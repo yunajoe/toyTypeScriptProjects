@@ -1,17 +1,23 @@
 import { useState } from "react";
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidrePassword,
+  isValidUserName,
+} from "../utils/valid";
 import styles from "./LoginFrom.module.css";
 
-interface userName {
+export interface userName {
   username: string;
 }
 
-interface userEmail {
+export interface userEmail {
   email: string;
 }
-interface userPassword {
+export interface userPassword {
   password: string;
 }
-interface userRePassword {
+export interface userRePassword {
   repassword: string;
 }
 
@@ -27,12 +33,15 @@ export default function LoginForm() {
   const [validEmailInput, setValidEmailInput] = useState<boolean | undefined>(
     undefined
   );
-  const [validPassWrodInput, setValidPasswordInput] = useState<
+  const [validPasswordInput, setValidPasswordInput] = useState<
+    boolean | undefined
+  >(undefined);
+
+  const [validrePasswordInput, setValidrePasswordInput] = useState<
     boolean | undefined
   >(undefined);
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setUserName(e.target.value);
     setUserName({ username: e.target.value });
   };
 
@@ -47,32 +56,11 @@ export default function LoginForm() {
     setRePassWord({ repassword: e.target.value });
   };
 
-  // username 유효성 검사하기
-  const isValidUserName = (input: userName): boolean => {
-    return input.username.trim().length > 3;
-  };
-
-  // useremail유효성 검사하기
-  const isValidEmail = (input: userEmail) => {
-    const re =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(input.email.trim());
-  };
-
-  // password 유효성 검사하기
-
-  const isValidPassword = (input: userPassword, input2: userRePassword) => {
-    if (input.password === input2.repassword) {
-      return true;
-    }
-    return false;
-  };
-
-  // form 제출하기
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // username 유효성
     setFormSumitted(true);
+
     if (isValidUserName(userName)) {
       setValidInput(true);
     } else if (!isValidUserName(userName)) {
@@ -85,11 +73,18 @@ export default function LoginForm() {
       setValidEmailInput(false);
     }
 
-    // passwor유쇼어
-    if (isValidPassword(password, rePassWord)) {
+    // password유효성
+    if (isValidPassword(password)) {
       setValidPasswordInput(true);
-    } else if (!isValidPassword(password, rePassWord)) {
+    } else {
       setValidPasswordInput(false);
+    }
+
+    // repassword 유효성
+    if (isValidrePassword(password, rePassWord)) {
+      setValidrePasswordInput(true);
+    } else {
+      setValidrePasswordInput(false);
     }
   };
 
@@ -127,7 +122,13 @@ export default function LoginForm() {
       <div className={styles.input__container}>
         <label className={styles.label}>Password</label>
         <input
-          className={styles.input}
+          className={
+            formSubmiited
+              ? validPasswordInput
+                ? styles.input__valid
+                : styles.input__invalid
+              : styles.input
+          }
           type="password"
           onChange={handleChangePassword}
         />
@@ -137,7 +138,7 @@ export default function LoginForm() {
         <input
           className={
             formSubmiited
-              ? validPassWrodInput
+              ? validrePasswordInput
                 ? styles.input__valid
                 : styles.input__invalid
               : styles.input
@@ -148,7 +149,6 @@ export default function LoginForm() {
       </div>
       {/* button의 type형태는 button과 submit 형태가 있다. button형태는 해당 버튼이 클릭할 수 있는 버튼(clickable button)임을 명시함. */}
       {/* button의 type형태는 button과 submit 형태가 있다. submit형태는	해당 버튼이 폼 데이터(form data)를 제출하는 제출 버튼(submit button)임을 명시함.. */}
-
       <button type="submit" className={styles.button}>
         Submit
       </button>
