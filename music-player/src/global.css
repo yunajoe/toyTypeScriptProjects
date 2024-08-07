@@ -1,0 +1,13 @@
+html {
+  font-size: 62.5%;
+}
+
+:root {
+  --primary-color: #dfdfe2;
+  --secondary-color: #ffffff;
+  --app-background-color: #4d4d62;
+  --background-color: #1b1b32;
+  --foreground-color: #3b3b4f;
+  --highlight-color: #f1be32;
+  --font-headline: "Roboto Mono", monospace;
+}
