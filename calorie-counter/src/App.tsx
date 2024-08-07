@@ -1,9 +1,9 @@
 import classNames from "classnames/bind";
 import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
-import styles from "./App.module.scss";
-import useInputs from "./hooks/useInputs";
 import "react-dropdown/style.css";
+import styles from "./App.module.scss";
 import DropDown from "./components/dropdown/DropDown";
+import useInputs from "./hooks/useInputs";
 
 const cx = classNames.bind(styles);
 
@@ -34,7 +34,7 @@ function reducer(state: any, action: any) {
 const initialState = {
   totalOutputCalorie: 0,
   selectedValue: "BreakFast",
-  budgetValue: "",
+  budgetValue: 0,
 };
 
 function App() {
@@ -148,101 +148,110 @@ function App() {
   });
   return (
     <div className={cx("container")}>
-      <h1 className={cx("title")}>Calorie Counter</h1>
-      <form className={cx("form__container")} id="form">
-        <div className={cx("budget__container")}>
-          <p>Budget</p>
-          <input
-            className={cx("budget-input")}
-            type="number"
-            // min="0"
-            placeholder="Daily calorie budget"
-            onChange={handleBudget}
-            value={state.budgetValue}
-            required
-          />
-        </div>
-        {inputNames.map((inputName) => {
-          return (
-            <div key={inputName}>
-              <fieldset className={cx("fieldset")}>
-                <legend>{inputName}</legend>
-                <div className={cx("new__field")} id="input-field">
-                  {selectedInput.map((input, idx) => {
-                    if (input.id === inputName) {
-                      InPutIndex[inputName].push(idx);
-                      const { id, label, type } = input;
-                      return (
-                        <div key={idx} className={cx("input-container")}>
-                          <label>{label}</label>
-                          <input
-                            id={id}
-                            type={type}
-                            onBlur={(e) => handleChangeValue(e, input)}
-                          />
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
-              </fieldset>
-            </div>
-          );
-        })}
-        <div className={cx("controls")}>
-          <label className={cx("label")}>Add food or exercise:</label>
-          <div
-            className={cx("dropdown")}
-            ref={dropDownRef}
-            onClick={(e) => {
-              setIsOpen(!isOpen);
-              handleOutsideClick(e);
-            }}
-          >
-            <p>{state.selectedValue}</p>
-
-            {isOpen && (
-              <DropDown
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                menus={menus}
-                defaultOption={defaultOption}
-                handleMenuClick={handleMenuClick}
-              />
-            )}
+      <div className={cx("calorie_counter_container")}>
+        <h1 className={cx("title")}>Calorie Counter</h1>
+        <form className={cx("form__container")} id="form">
+          <div className={cx("budget__container")}>
+            <p>Budget</p>
+            <input
+              className={cx("budget-input")}
+              type="number"
+              placeholder="Daily calorie budget"
+              onChange={handleBudget}
+              value={Number(state.budgetValue).toString()}
+              required
+            />
           </div>
-          <button
-            className={cx("add-button")}
-            onClick={(e: any) => {
-              handleAddEntry(
-                e,
-                state.selectedValue,
-                Math.floor(InPutIndex[state.selectedValue].length / 2) + 1
-              );
-            }}
-          >
-            AddEntry
-          </button>
-        </div>
-        <div className={cx("button__container")}>
-          <button type="submit" onClick={handleCalculate}>
-            Calculate Remaining Calories
-          </button>
-          <button>Clear</button>
-        </div>
-      </form>
-      {isOutPutOpen && (
-        <div className={cx("output-container")}>
-          <span className={cx("result")}>
-            {state.totalOutputCalorie} Calorie
-            {state.totalOutputCalorie > 0 ? "Deficit" : "SurPlus"}
-          </span>
-          <hr />
-          <p>{state.budgetValue} Calories Budgeted</p>
-          <p>{totalConsumedCalorie} Calories Consumed</p>
-          <p>{totalBurnedCalorie} Calories Burned</p>
-        </div>
-      )}
+          {inputNames.map((inputName) => {
+            return (
+              <div key={inputName}>
+                <fieldset className={cx("fieldset")}>
+                  <legend>{inputName}</legend>
+                  <div className={cx("new__field")} id="input-field">
+                    {selectedInput.map((input, idx) => {
+                      if (input.id === inputName) {
+                        InPutIndex[inputName].push(idx);
+                        const { id, label, type } = input;
+                        return (
+                          <div key={idx} className={cx("input-container")}>
+                            <label>{label}</label>
+                            <input
+                              id={id}
+                              type={type}
+                              onBlur={(e) => handleChangeValue(e, input)}
+                            />
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                </fieldset>
+              </div>
+            );
+          })}
+          <div className={cx("controls")}>
+            <div className={cx("dropdown-container")}>
+              <label className={cx("label")}>Add food or exercise:</label>
+              <div
+                className={cx("dropdown")}
+                ref={dropDownRef}
+                onClick={(e) => {
+                  setIsOpen(!isOpen);
+                  handleOutsideClick(e);
+                }}
+              >
+                <div>
+                  <input
+                    className={cx("selected-menu")}
+                    value={state.selectedValue}
+                    readOnly
+                  />
+                  {isOpen && (
+                    <DropDown
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      menus={menus}
+                      defaultOption={defaultOption}
+                      handleMenuClick={handleMenuClick}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              className={cx("add-button")}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                handleAddEntry(
+                  e,
+                  state.selectedValue,
+                  Math.floor(InPutIndex[state.selectedValue].length / 2) + 1
+                );
+              }}
+            >
+              AddEntry
+            </button>
+          </div>
+          <div className={cx("button__container")}>
+            <button type="submit" onClick={handleCalculate}>
+              Calculate Remaining Calories
+            </button>
+            <button>Clear</button>
+          </div>
+        </form>
+        {/* 아웃풋 */}
+        {isOutPutOpen && (
+          <div className={cx("output-container")}>
+            <span>
+              {state.totalOutputCalorie} Calorie
+              {state.totalOutputCalorie > 0 ? "Deficit" : "SurPlus"}
+            </span>
+            <hr />
+            <p>{state.budgetValue} Calories Budgeted</p>
+            <p>{totalConsumedCalorie} Calories Consumed</p>
+            <p>{totalBurnedCalorie} Calories Burned</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

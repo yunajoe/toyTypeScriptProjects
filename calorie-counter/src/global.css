@@ -12,3 +12,10 @@
 html {
   font-size: 62.5%;
 }
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--dark-blue);
+}

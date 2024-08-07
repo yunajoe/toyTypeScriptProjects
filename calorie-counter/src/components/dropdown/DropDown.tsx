@@ -1,6 +1,6 @@
+import classNames from "classnames/bind";
 import { SetStateAction } from "react";
 import styles from "./DropDown.module.scss";
-import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
 type DropDownPropsType = {
@@ -17,7 +17,11 @@ function DropDown({ menus, isOpen, handleMenuClick }: DropDownPropsType) {
       <div className={cx("wrapper")}>
         {menus.map((menu) => {
           return (
-            <li key={menu} onClick={() => handleMenuClick(menu)}>
+            <li
+              className={cx("menu")}
+              key={menu}
+              onClick={() => handleMenuClick(menu)}
+            >
               {menu}
             </li>
           );

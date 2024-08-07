@@ -1,5 +1,3 @@
-import { SetStateAction } from "react";
-// React.Dispatch<SetStateAction<string>>;
 export type InputCalorieValue = {
   idx: number;
   calorie: number;

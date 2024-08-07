@@ -47,7 +47,6 @@ function useInputs(inputNames: string[]) {
         }
         return item;
       });
-      //  newArray가 prev가 된다
       return newArray;
     });
   };
