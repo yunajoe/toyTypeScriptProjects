@@ -1,0 +1,20 @@
+# Node modules  
+node_modules/
+
+# build output
+dist/
+build/
+
+
+# package
+package-lock.json
+
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+*.swp
+
+# Webpack cache
+.cache/
+*.cache
