@@ -133,6 +133,7 @@ describe("<App>", () => {
     editInput = screen.getByRole("textbox", {
       name: /edit todo input/i,
     });
+    expect(editInput).toHaveValue("");
   });
 
   it("editButton and cancleButton ", async () => {
