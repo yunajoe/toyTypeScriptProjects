@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import DeleteButton from "./components/button/DeleteButton";
+import EditButton from "./components/button/EditButton";
 
-interface Todo {
+export interface Todo {
   id: string;
   todo: string;
   completed: boolean;
@@ -88,7 +90,14 @@ function App() {
     <div className="flex justify-center w-screen h-screen bg-slate-300">
       <div className="flex flex-col items-center w-4/5 pt-10 gap-y-6">
         <div className="flex gap-10">
-          <input type="text" value={value} onChange={handleInputValue} />
+          <input
+            type="text"
+            name="add-todo-input"
+            aria-label="Add Todo Input"
+            value={value}
+            onChange={handleInputValue}
+          />
+
           <button
             disabled={disable}
             onClick={addTodo}
@@ -101,65 +110,51 @@ function App() {
             AddTodo
           </button>
         </div>
-        {todos.map((todo) => (
-          <div key={todo.id} className="flex p-1.5 bg-blue-200">
-            <li className="flex gap-5 bg-blue-200">
-              <div className="flex gap-5">
-                <span
-                  style={{
-                    textDecoration: todo.completed ? "line-through" : "",
-                    display: todo.id === editInputId ? "none" : "block",
-                  }}
-                >
-                  {todo.todo}
-                </span>
-                {todo.id === editInputId && (
-                  <input
-                    value={editValue}
-                    onChange={handleEditInputValue}
-                    placeholder={todo.todo}
-                  />
-                )}
-                <button onClick={() => completedTodo(todo)}>
-                  {todo.completed ? "completed" : "incompleted"}
-                </button>
-              </div>
-              <button
-                className="text-white bg-blue-500"
-                onClick={() => deleteTodo(todo)}
-              >
-                삭제하기
-              </button>
-              <div>
-                <button
-                  className="text-white bg-gray-400"
-                  onClick={() => editTodo(todo)}
-                  style={{
-                    display: todo.id === editInputId ? "none" : "block",
-                  }}
-                >
-                  편집하기
-                </button>
-                {editInputId === todo.id && (
-                  <div className="flex gap-x-3">
-                    <button
-                      className="text-white bg-gray-400"
-                      onClick={handleCancel}
-                    >
-                      취소하기
-                    </button>
-                    <button
-                      className="text-white bg-gray-400"
-                      onClick={() => handleSave(todo)}
-                    >
-                      저장하기
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-          </div>
-        ))}
+        <ul>
+          {todos.map((todo) => (
+            <div
+              key={todo.id}
+              className="flex p-1.5 bg-blue-200"
+              data-testid="list-item"
+            >
+              <li className="flex gap-5 bg-blue-200">
+                <div className="flex gap-5">
+                  <span
+                    data-testid="item-name"
+                    style={{
+                      textDecoration: todo.completed ? "line-through" : "",
+                      display: todo.id === editInputId ? "none" : "block",
+                    }}
+                  >
+                    {todo.todo}
+                  </span>
+                  {todo.id === editInputId && (
+                    <input
+                      aria-label="Edit Todo Input"
+                      value={editValue}
+                      onChange={handleEditInputValue}
+                      placeholder={todo.todo}
+                    />
+                  )}
+                  <button
+                    // data-testid="completed-button"
+                    onClick={() => completedTodo(todo)}
+                  >
+                    {todo.completed ? "completed" : "incompleted"}
+                  </button>
+                </div>
+                <DeleteButton onClick={() => deleteTodo(todo)} />
+                <EditButton
+                  editOnClick={() => editTodo(todo)}
+                  saveOnClick={() => handleSave(todo)}
+                  cancelOnClick={handleCancel}
+                  todo={todo}
+                  editInputId={editInputId}
+                />
+              </li>
+            </div>
+          ))}
+        </ul>
       </div>
     </div>
   );
