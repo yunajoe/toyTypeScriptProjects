@@ -2,13 +2,16 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [totalTime, setTotalTime] = useState(710000);
+  const [totalTime, setTotalTime] = useState(0);
   const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
   const [second, setSecond] = useState("00");
   const [miliSecond, setMiliSecond] = useState("00");
 
-  // console.log("토탈타임", totalTime);
+  // timeerId
+  const [timerId, setTimerId] = useState<number | null>(null);
+
+  console.log("timerId", timerId);
 
   const convertTime = (time: number) => {
     const stringMiliTime = time.toString().padStart(2, "0");
@@ -44,14 +47,28 @@ function App() {
       const stringHour = floorTime3.toString().padStart(2, "0");
       setHour(stringHour);
     }
+
+    if (time === 35999990) {
+      // stop기능
+    }
   };
   const handleStart = () => {
-    setInterval(() => {
+    let timerId = setInterval(() => {
       setTotalTime((prev) => {
         convertTime(prev);
         return prev + 1;
       });
     }, 10);
+    if (timerId) {
+      setTimerId(timerId);
+    }
+  };
+
+  const handlePause = () => {
+    console.log("포오즈", timerId);
+    if (timerId) {
+      clearInterval(timerId);
+    }
   };
 
   return (
@@ -67,6 +84,7 @@ function App() {
         <h1>{totalTime}</h1>
       </div>
       <button onClick={handleStart}>START버튼</button>
+      <button onClick={handlePause}>PAUSE버튼</button>
     </div>
   );
 }
