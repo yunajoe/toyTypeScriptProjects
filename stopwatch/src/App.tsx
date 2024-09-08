@@ -11,8 +11,6 @@ function App() {
   // timeerId
   const [timerId, setTimerId] = useState<number | null>(null);
 
-  console.log("timerId", timerId);
-
   const convertTime = (time: number) => {
     const stringMiliTime = time.toString().padStart(2, "0");
     const stringMilli = stringMiliTime.slice(-2);
@@ -48,8 +46,8 @@ function App() {
       setHour(stringHour);
     }
 
-    if (time === 35999990) {
-      // stop기능
+    if (time >= 35999990) {
+      handlePause();
     }
   };
   const handleStart = () => {
@@ -65,10 +63,17 @@ function App() {
   };
 
   const handlePause = () => {
-    console.log("포오즈", timerId);
     if (timerId) {
       clearInterval(timerId);
     }
+  };
+
+  const handleReset = () => {
+    setTotalTime(0);
+    setHour("00");
+    setMinute("00");
+    setSecond("00");
+    setMiliSecond("00");
   };
 
   return (
@@ -81,10 +86,10 @@ function App() {
         <h1>{second}</h1>
         <h1>:</h1>
         <h1>{miliSecond}</h1>
-        <h1>{totalTime}</h1>
       </div>
       <button onClick={handleStart}>START버튼</button>
       <button onClick={handlePause}>PAUSE버튼</button>
+      <button onClick={handleReset}>RESET버튼</button>
     </div>
   );
 }
