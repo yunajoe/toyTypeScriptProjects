@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+type Item = {
+  callValue: number | string;
+  time: number;
+};
+
 function App() {
   const [inputValue, setInputValue] = useState<number>();
   const [binaryValue, setBinaryValue] = useState("");
   const [callValueArr, setCallValueArr] = useState<number[]>([]);
-  const [renderValueArr, setRenderValueArr] = useState<number[]>([]);
+  const [renderValueArr, setRenderValueArr] = useState<Item[]>([]);
 
   const convertDecimalToBinary = (num: number): any => {
     if (num === 0 || num === 1) {
@@ -21,8 +26,9 @@ function App() {
   };
   const handleButtonClick = (value: number) => {
     setCallValueArr((prev) => [...prev, value]);
+
     const binary = convertDecimalToBinary(value);
-    setBinaryValue(binary);
+    // setBinaryValue(binary);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -39,23 +45,46 @@ function App() {
     }
   };
 
-  console.log("ccc", callValueArr);
+  // const callStackAnimation = (arr: number[]) => {
+  //   setBinaryValue("Call Stack Animation");
+  //   let defaultTime = 2000;
+  //      //   let text = `decimalTobinary(${value}) returns and gives that value to the stack below. then if pops off the stack`;
+  //   arr.forEach((value: number, index: number) => {
+  //     let delayTime = defaultTime * (index + 1);
+  //     let timeId = setTimeout(() => {
+  //       setRenderValueArr((prev) => [value, ...prev]);
+  //     }, delayTime);
+
+  //   });
+  // };
 
   const callStackAnimation = (arr: number[]) => {
-    arr.forEach((num: number) => {
+    setBinaryValue("Call Stack Animation");
+    let defaultTime = 2000;
+
+    //   let text = `decimalTobinary(${value}) returns and gives that value to the stack below. then if pops off the stack`;
+    arr.forEach((value: number, index: number) => {
+      let delayTime = defaultTime * (index + 1);
       setTimeout(() => {
-        console.log("num", num);
-        setRenderValueArr((prev) => [num, ...prev]);
-      }, 3000);
-      console.log("콜스택시작");
+        setRenderValueArr((prev) => [
+          {
+            callValue: value,
+            time: delayTime,
+          },
+          ...prev,
+        ]);
+      }, delayTime);
     });
   };
 
   useEffect(() => {
     if (callValueArr.length > 0) {
+      console.log("콜애니메이션");
       callStackAnimation(callValueArr);
     }
   }, [callValueArr]);
+
+  //  renderValuArr
 
   return (
     <>
@@ -66,7 +95,7 @@ function App() {
           type="number"
           id="decimal_number"
           className="input"
-          value={inputValue}
+          value={inputValue || ""}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
@@ -88,8 +117,13 @@ function App() {
       <div className="output_container">
         <h1>call stack</h1>
         <div className="output">
-          {renderValueArr.map((value) => {
-            return <div>{value}</div>;
+          {renderValueArr.map((item, index) => {
+            console.log("value", item.callValue);
+            return (
+              <div className="item" key={index}>
+                {item.callValue}
+              </div>
+            );
           })}
         </div>
       </div>

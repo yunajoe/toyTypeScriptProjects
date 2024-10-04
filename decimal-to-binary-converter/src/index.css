@@ -42,10 +42,6 @@ h1 {
   border: 2px dashed var(--orange);
   min-height: 100px;
 }
-.output {
-  border: 2px dashed var(--orange);
-  min-height: 500px;
-}
 
 .input {
   margin-left: 10px;
@@ -57,4 +53,17 @@ h1 {
   padding: 10px;
   background-color: var(--orange);
   color: black;
+}
+.output {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  row-gap: 10px;
+  border: 2px dashed var(--orange);
+  min-height: 500px;
+}
+
+.item {
+  background-color: var(--orange);
+  padding: 10px;
 }
