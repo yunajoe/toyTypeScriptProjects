@@ -26,9 +26,8 @@ function App() {
   };
   const handleButtonClick = (value: number) => {
     setCallValueArr((prev) => [...prev, value]);
-
-    const binary = convertDecimalToBinary(value);
-    // setBinaryValue(binary);
+    const binaryValue = convertDecimalToBinary(value);
+    setBinaryValue(binaryValue);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -45,24 +44,10 @@ function App() {
     }
   };
 
-  // const callStackAnimation = (arr: number[]) => {
-  //   setBinaryValue("Call Stack Animation");
-  //   let defaultTime = 2000;
-  //      //   let text = `decimalTobinary(${value}) returns and gives that value to the stack below. then if pops off the stack`;
-  //   arr.forEach((value: number, index: number) => {
-  //     let delayTime = defaultTime * (index + 1);
-  //     let timeId = setTimeout(() => {
-  //       setRenderValueArr((prev) => [value, ...prev]);
-  //     }, delayTime);
-
-  //   });
-  // };
-
   const callStackAnimation = (arr: number[]) => {
     setBinaryValue("Call Stack Animation");
     let defaultTime = 2000;
 
-    //   let text = `decimalTobinary(${value}) returns and gives that value to the stack below. then if pops off the stack`;
     arr.forEach((value: number, index: number) => {
       let delayTime = defaultTime * (index + 1);
       setTimeout(() => {
@@ -79,12 +64,54 @@ function App() {
 
   useEffect(() => {
     if (callValueArr.length > 0) {
-      console.log("콜애니메이션");
       callStackAnimation(callValueArr);
     }
   }, [callValueArr]);
 
-  //  renderValuArr
+  useEffect(() => {
+    if (renderValueArr.length > 0 && callValueArr.length > 0)
+      if (renderValueArr.length === callValueArr.length) {
+        let maxTime = renderValueArr[0].time;
+        renderValueArr.forEach((item, index) => {
+          let delayTime = maxTime + 1000 * (index + 1);
+          setTimeout(() => {
+            setRenderValueArr((prev) => {
+              return prev.map((prevItem, prevIndex) => {
+                if (prevIndex === index) {
+                  return {
+                    ...prevItem,
+                    callValue: `decimalTobinary(${prevItem.callValue}) returns and gives that value to the stack below. then if pops off the stack`,
+                  };
+                }
+                return prevItem;
+              });
+            });
+          }, delayTime);
+        });
+      }
+  }, [renderValueArr.length]);
+
+  console.log("렌더되는 arr입니다", renderValueArr);
+
+  useEffect(() => {
+    if (renderValueArr.length > 0) {
+      const isAllString = renderValueArr.every(
+        (item) => typeof item.callValue === "string"
+      );
+      let maxTime = renderValueArr[0].time;
+      if (isAllString) {
+        renderValueArr.forEach((_, index) => {
+          let delayTime = maxTime + 1000 * (index + 1);
+          setTimeout(() => {
+            setRenderValueArr((prev) => {
+              const filterArr = prev.filter((_, prevIndex) => prevIndex !== 0);
+              return filterArr;
+            });
+          }, delayTime + 1000 * (index + 1));
+        });
+      }
+    }
+  }, [renderValueArr]);
 
   return (
     <>
@@ -118,7 +145,6 @@ function App() {
         <h1>call stack</h1>
         <div className="output">
           {renderValueArr.map((item, index) => {
-            console.log("value", item.callValue);
             return (
               <div className="item" key={index}>
                 {item.callValue}
