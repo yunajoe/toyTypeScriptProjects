@@ -97,7 +97,7 @@ function App() {
           setCallValueArr((prev) => {
             return prev.filter((_, prevIndex) => prevIndex !== 0);
           });
-        }, delayTime + 3000);
+        }, delayTime + 1000);
       }
     });
   };
