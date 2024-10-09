@@ -9,6 +9,7 @@ type Item = {
 function App() {
   const [inputValue, setInputValue] = useState<number>();
   const [binaryValue, setBinaryValue] = useState("");
+  const [animationStart, setAnimationStart] = useState(false);
 
   const [callValueArr, setCallValueArr] = useState<number[]>([]);
   const [renderValueArr, setRenderValueArr] = useState<Item[]>([]);
@@ -25,6 +26,7 @@ function App() {
     const value = Number(e.target.value);
     setInputValue(value);
   };
+
   const handleButtonClick = (value: number) => {
     setCallValueArr((prev) => [...prev, value]);
     const binaryValue = convertDecimalToBinary(value);
@@ -47,8 +49,8 @@ function App() {
   };
 
   const callStackAnimation = (arr: number[]) => {
-    // setBinaryValue("Call Stack Animation");
-    console.log("CallStackAnimation입니당", arr);
+    setAnimationStart(true);
+
     let defaultTime = 1000;
 
     arr.forEach((value: number, index: number) => {
@@ -65,19 +67,10 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    if (callValueArr.length > 0) {
-      callStackAnimation(callValueArr);
-    }
-  }, [callValueArr]);
-
   const changeStack = (arr: Item[]) => {
     if (arr.length === 0) {
       return;
     }
-
-    console.log("arr", arr);
-
     arr.forEach((_, index) => {
       let maxTime = arr[0].time;
       let delayTime = maxTime + 1000 * (index + 1);
@@ -98,7 +91,6 @@ function App() {
         }, delayTime);
 
         setTimeout(() => {
-          console.log("하이이이이");
           setRenderValueArr((prev) => {
             return prev.filter((_, prevIndex) => prevIndex !== 0);
           });
@@ -111,65 +103,25 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(
-      "렌더엉어",
-      renderValueArr,
-      renderValueArr.length,
-      callValueArr.length
-    );
+    if (inputValue) {
+      if (inputValue === callValueArr[0]) {
+        callStackAnimation(callValueArr);
+      }
+    }
+  }, [callValueArr.length]);
+
+  useEffect(() => {
     if (renderValueArr.length > 0 && callValueArr.length > 0) {
       if (renderValueArr.length === callValueArr.length) {
-        console.log("renderValu", renderValueArr);
         changeStack(renderValueArr);
       }
     }
+    if (inputValue) {
+      if (renderValueArr.length === 0) {
+        setAnimationStart(false);
+      }
+    }
   }, [renderValueArr.length]);
-
-  // useEffect(() => {
-  //   if (renderValueArr.length > 0 && callValueArr.length > 0) {
-  //     if (renderValueArr.length === callValueArr.length) {
-  //       console.log("rrr", renderValueArr);
-  //       let maxTime = renderValueArr[0].time;
-  //       renderValueArr.forEach((item, index) => {
-  //         let delayTime = maxTime + 1000 * (index + 1);
-  //         let timeId = setTimeout(() => {
-  //           setRenderValueArr((prev) => {
-  //             return prev.map((prevItem, prevIndex) => {
-  //               if (prevIndex === index) {
-  //                 return {
-  //                   ...prevItem,
-  //                   callValue: `decimalTobinary(${prevItem.callValue}) returns and gives that value to the stack below. then if pops off the stack`,
-  //                 };
-  //               }
-  //               return prevItem;
-  //             });
-  //           });
-  //         }, delayTime);
-  //         console.log("timeId", timeId);
-  //       });
-  //     }
-  //   }
-  // }, [renderValueArr.length]);
-
-  // useEffect(() => {
-  //   if (renderValueArr.length > 0) {
-  //     const isAllString = renderValueArr.every(
-  //       (item) => typeof item.callValue === "string"
-  //     );
-  //     let maxTime = renderValueArr[0].time;
-  //     if (isAllString) {
-  //       renderValueArr.forEach((_, index) => {
-  //         let delayTime = maxTime + 1000 * (index + 1);
-  //         setTimeout(() => {
-  //           setRenderValueArr((prev) => {
-  //             const filterArr = prev.filter((_, prevIndex) => prevIndex !== 0);
-  //             return filterArr;
-  //           });
-  //         }, delayTime + 1000 * (index + 1));
-  //       });
-  //     }
-  //   }
-  // }, [renderValueArr]);
 
   return (
     <>
@@ -195,7 +147,7 @@ function App() {
           convert
         </button>
         <div className="result">
-          <div>{binaryValue}</div>
+          <div>{animationStart ? "Call Stack Animation" : binaryValue}</div>
         </div>
       </div>
       {/* output */}
