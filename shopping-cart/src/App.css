@@ -27,8 +27,37 @@
   border: 5px solid white;
 }
 
-.calculate_cart {
+.cleart_cart_container {
   position: fixed;
   top: 0;
   right: 0;
+  z-index: 10;
+  color: black;
+  font-size: 20px;
+}
+.cart_button {
+  width: 200px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: black;
+  border: 5px solid white;
+  z-index: 20;
+}
+
+.cleart_cart {
+  border: 5px solid black;
+  background-color: white;
+  width: 400px;
+  height: 400px;
+  overflow: auto;
+  margin-top: 100px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.clear_cart_button {
+  background-color: black;
+  width: 200px;
 }

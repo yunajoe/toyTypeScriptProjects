@@ -10,10 +10,13 @@ function App() {
 
   return (
     <>
-      <button className="calculate_cart" onClick={handlecart}>
-        Show Cart
-      </button>
-      <CalculateCart />
+      <div className="cleart_cart_container">
+        <button className="cart_button" onClick={handlecart}>
+          {isCartVsible ? "Hide Cart" : "Show Cart"}
+        </button>
+        {isCartVsible && <CalculateCart />}
+      </div>
+
       <h1>Desserts Page</h1>
       <div className="container">
         {products.map((item) => {

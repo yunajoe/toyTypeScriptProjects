@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
-import { Product } from "../type.";
+import { CountProduct, Product } from "../type.";
 import cart from "../utils";
 import { CalculateCartActions, CartVisibleActions } from "./action";
 
 // state type
 interface CartCalCulateState {
   itemArr: Product[];
+  countItemArr: CountProduct[];
   totalCountItems: number;
   subtotal: number;
   taxes: number;
@@ -24,6 +25,7 @@ const cartVisibleState: CartVisibleState = {
 
 const cartCalCulateState: CartCalCulateState = {
   itemArr: cart.itemsArr,
+  countItemArr: cart.countItemArr,
   totalCountItems: cart.getTotalItemCount,
   subtotal: 0,
   taxes: 0,
@@ -39,6 +41,19 @@ export const useCartStore = create<CartCalCulateState & CalculateCartActions>(
         cart.calculateItemPrice();
         set({
           itemArr: cart.itemsArr,
+          countItemArr: cart.countItemArr,
+          totalCountItems: cart.getTotalItemCount,
+          total: cart.totalPrice,
+          subtotal: cart.totalSubPrice,
+          taxes: cart.totalTax,
+        });
+      },
+
+      handleclearItems: () => {
+        cart.cleartCart();
+        set({
+          itemArr: cart.itemsArr,
+          countItemArr: cart.countItemArr,
           totalCountItems: cart.getTotalItemCount,
           total: cart.totalPrice,
           subtotal: cart.totalSubPrice,

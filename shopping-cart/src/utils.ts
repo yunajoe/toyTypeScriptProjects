@@ -1,8 +1,8 @@
-import { Product } from "./type.";
+import { CountProduct, Product } from "./type.";
 
 class Cart {
   itemsArr: Product[];
-  countItemArr: [];
+  countItemArr: CountProduct[];
   totalCountItems: number;
   totalPrice: number;
   totalSubPrice: number;
@@ -24,15 +24,22 @@ class Cart {
   }
 
   addItemToCart(item: Product) {
+    const findIndex = this.itemsArr.findIndex((value) => value.id == item.id);
+    if (findIndex === -1) {
+      const obj = {
+        ...item,
+        count: 1,
+      };
+      this.countItemArr = [...this.countItemArr, obj];
+    } else {
+      const findObj = this.countItemArr.find(
+        (obj) => obj.id === item.id
+      ) as CountProduct;
+
+      findObj.count += 1;
+    }
+
     this.itemsArr = [...this.itemsArr, item];
-    console.log("this.Arr", this.itemsArr);
-    // this.countItemArr = this.countItemArr.reduce((newObject, item) => {
-    //   if (this.itemsArr.length > 0) {
-    //     const isItemExist = this.itemsArr.findIndex(
-    //       (previousItem) => previousItem.id === item.id
-    //     );
-    //   }
-    // }, {});
   }
   calculateItemPrice() {
     (this.totalSubPrice = this.itemsArr.reduce((subTotalPrice, item) => {
@@ -46,6 +53,16 @@ class Cart {
       }, 0));
 
     this.totalPrice = Number((this.totalSubPrice + this.totalTax).toFixed(2));
+  }
+
+  cleartCart() {
+    this.itemsArr = [];
+    this.countItemArr = [];
+    this.totalCountItems = 0;
+    this.totalPrice = 0;
+    this.totalSubPrice = 0;
+    this.totalTax = 0;
+    this.tax = 0.3;
   }
 }
 const cart = new Cart();

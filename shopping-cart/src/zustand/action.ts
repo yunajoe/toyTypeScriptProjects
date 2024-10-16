@@ -9,5 +9,7 @@ export interface CartVisibleActions {
 export interface CalculateCartActions {
   actions: {
     handleaddItems: (item: Product) => void;
+
+    handleclearItems: () => void;
   };
 }
