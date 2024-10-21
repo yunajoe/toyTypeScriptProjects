@@ -6,5 +6,8 @@
   align-items: center;
 }
 
-.buttonContainer {
+.canvas {
+  width: 100vw;
+  height: 100vh;
+  background-color: blue;
 }
