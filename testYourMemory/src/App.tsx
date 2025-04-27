@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import "./card.css";
 
@@ -8,6 +8,7 @@ const getImages = () => {
     for (let i = 1; i <= 6; i++) {
       images.push({
         id: i,
+        index: 9999,
         path: `../public/Flower${i}.jpg`,
         showBackImage: false,
       });
@@ -35,12 +36,12 @@ function App() {
   // }
   // index를 선택한 카드가 뒤지어 져야 한다. 다르르
   const handleClick = (index: number, card: any) => {
-    console.log("index입니다", index);
     setCardImages((prev) => {
       const copyPrev = [...prev];
       let targetCard = copyPrev[index];
       targetCard = {
         id: targetCard.id,
+        index: index,
         path: targetCard.path,
         showBackImage: !targetCard.showBackImage,
       };
@@ -48,7 +49,43 @@ function App() {
       return copyPrev;
     });
   };
-  console.log("cardImages", cardImages);
+
+  useEffect(() => {
+    const onlyTrueArray = cardImages.filter((item) => item.showBackImage);
+    onlyTrueArray.forEach((item, index, arr) => {
+      if (index % 2 !== 0) {
+        const isPair = arr[index].id === arr[index - 1].id;
+        console.log("isPar", isPair);
+        if (!isPair) {
+          // setCardImages((prev) => {
+          //   const copyPrev = [...prev];
+          //   let targetCard = copyPrev[index];
+          //   let targetCard2 = copyPrev[index - 1];
+          //   console.log("target", targetCard, targetCard2);
+          //   targetCard = {
+          //     id: targetCard.id,
+          //     index: index,
+          //     path: targetCard.path,
+          //     showBackImage: !targetCard.showBackImage,
+          //   };
+          //   targetCard2 = {
+          //     id: targetCard.id,
+          //     index: index,
+          //     path: targetCard.path,
+          //     showBackImage: !targetCard.showBackImage,
+          //   };
+          //   copyPrev[index] = targetCard;
+          //   return copyPrev;
+          // });
+        }
+      }
+    });
+    // const Ids = onlyTrueArray.map((item) => item.id);
+    // const set = Array.from(new Set(Ids));
+    // if (Ids.length === set.length) {
+    // }
+    // console.log("Ids", Ids, "set", set);
+  });
 
   return (
     <>
