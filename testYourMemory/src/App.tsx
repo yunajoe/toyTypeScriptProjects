@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import "./card.css";
 
@@ -9,6 +9,7 @@ const getImages = () => {
       images.push({
         id: i,
         path: `../public/Flower${i}.jpg`,
+        showBackImage: false,
       });
     }
   }
@@ -19,27 +20,35 @@ const getImages = () => {
 function App() {
   const [cardImages, setCardImages] = useState(getImages);
   const [clickIndexArr, setClickIndexArr] = useState<any[]>([]);
+  const [isReset, setIsReset] = useState(false);
 
+  // if (prev.find((item) => item.id === targetCard.id)) {
+
+  //   // return [
+  //   //   ...prev,
+  //   //   {
+  //   //     id: targetCard.id,
+  //   //     path: targetCard.path,
+  //   //     showBackImage: !targetCard.showBackImage,
+  //   //   },
+  //   // ];
+  // }
   // index를 선택한 카드가 뒤지어 져야 한다. 다르르
   const handleClick = (index: number, card: any) => {
-    console.log("index", index);
-    console.log("card", card);
-    setClickIndexArr((prev) => [...prev, { index, ...card }]);
+    console.log("index입니다", index);
+    setCardImages((prev) => {
+      const copyPrev = [...prev];
+      let targetCard = copyPrev[index];
+      targetCard = {
+        id: targetCard.id,
+        path: targetCard.path,
+        showBackImage: !targetCard.showBackImage,
+      };
+      copyPrev[index] = targetCard;
+      return copyPrev;
+    });
   };
-
-  useEffect(() => {
-    console.log("clickIndexArr", clickIndexArr);
-    // clickIndexArr.forEach((item, index) => {
-    //   if (index % 2 !== 0) {
-    //     let prevIndex = index - 1;
-    //     const isDifferent =
-    //       clickIndexArr[index].id !== clickIndexArr[prevIndex].id;
-    //     if (isDifferent) {
-    //       setClickIndexArr([]);
-    //     }
-    //   }
-    // });
-  }, [clickIndexArr.length]);
+  console.log("cardImages", cardImages);
 
   return (
     <>
@@ -55,14 +64,19 @@ function App() {
       {/* card container */}
       <div className="card-container">
         {cardImages.map((card, index) => {
+          // console.log("card", card);
           return (
             <div
               key={index}
-              className={
-                clickIndexArr.find((item) => item.index === index)
-                  ? "card-click"
-                  : "card"
-              }
+              className={card.showBackImage ? "card-click" : "card"}
+              // className={
+              //   clickIndexArr[index].showBackImage ? "card-click" : "card"
+              // }
+              // className={
+              //   clickIndexArr.find((item) => item.index === index)
+              //     ? "card-click"
+              //     : "card"
+              // }
               onClick={() => handleClick(index, card)}
             >
               <div className="card-inner">
@@ -77,28 +91,6 @@ function App() {
             </div>
           );
         })}
-        {/* <div
-          className={!isImageShow ? "card" : "card-click"}
-          onClick={handleClick}
-        >
-          <div className="card-inner">
-            <div className="card-front">텍스트</div>
-            <div className="card-back">이미지</div>
-          </div>
-        </div>
-        <div className="card">2</div>
-        <div className="card">3</div>
-        <div className="card">4</div>
-
-        <div className="card">1</div>
-        <div className="card">2</div>
-        <div className="card">3</div>
-        <div className="card">4</div>
-
-        <div className="card">1</div>
-        <div className="card">2</div>
-        <div className="card">3</div>
-        <div className="card">4</div> */}
       </div>
     </>
   );
