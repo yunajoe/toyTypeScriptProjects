@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import "./card.css";
 
@@ -17,15 +17,29 @@ const getImages = () => {
 };
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [clickIndexArr, setClickIndexArr] = useState<any[]>([]);
   const [cardImages, setCardImages] = useState(getImages);
+  const [clickIndexArr, setClickIndexArr] = useState<any[]>([]);
 
   // index를 선택한 카드가 뒤지어 져야 한다. 다르르
   const handleClick = (index: number, card: any) => {
-    setClickIndexArr((prev) => {});
+    console.log("index", index);
+    console.log("card", card);
+    setClickIndexArr((prev) => [...prev, { index, ...card }]);
   };
-  console.log("clickIndexArr", clickIndexArr);
+
+  useEffect(() => {
+    console.log("clickIndexArr", clickIndexArr);
+    // clickIndexArr.forEach((item, index) => {
+    //   if (index % 2 !== 0) {
+    //     let prevIndex = index - 1;
+    //     const isDifferent =
+    //       clickIndexArr[index].id !== clickIndexArr[prevIndex].id;
+    //     if (isDifferent) {
+    //       setClickIndexArr([]);
+    //     }
+    //   }
+    // });
+  }, [clickIndexArr.length]);
 
   return (
     <>
