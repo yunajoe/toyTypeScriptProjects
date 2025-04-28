@@ -16,7 +16,7 @@
 .card .card-inner {
   width: 100%;
   height: 100%;
-  background-color: red;
+
   transition: transform 0.8s;
   transform-style: preserve-3d;
 }
@@ -28,7 +28,6 @@
 .card-inner {
   width: 100%;
   height: 100%;
-  background-color: red;
   transition: transform 0.8s;
   transform-style: preserve-3d;
   position: relative;
