@@ -1,54 +1,36 @@
-# React + TypeScript + Vite
+# 스프레트 시트 기능
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. 구글 스프레드의 파일, 수정, 보기, 서식, 데이터와 같게하기
 
-Currently, two official plugins are available:
+2. 쿼리문
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+   - 특정 열 선택  
+     ex) =QUERY(A1:D11, "SELECT A, B", 1)
+     A, B열에 해당하는 컬럼 값들만 나옴
 
-## Expanding the ESLint configuration
+   - 전체 열 선택
+     ex) =QUERY(A1:D11, "SELECT \*", 1)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   - WHERE 조건
+     ex) =QUERY(A1:D12, "SELECT A, D WHERE D > 4000", 1)
+     ex) =QUERY(A1:D12, "SELECT A WHERE B = 'mouse'", 1)
+     ex) =QUERY(A1:D12, "SELECT A, B, D WHERE B = 'webcam' AND D = 3800", 1)
+     ex) =QUERY(A1:D12, "SELECT A, C WHERE C >= date '2019-05-01'", 1)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+   - LABEL (열 이름 바꾸기)
+     ex) =QUERY(A1:D12, "SELECT A, D LABEL A '직원', D '판매금액'", 1)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   - ORDER BY (정렬)
+     ex) =QUERY(A1:D12, "SELECT A, D ORDER BY D DESC", 1)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+   - LIMIT
+     ex) QUERY(A1:D12, "SELECT A, B LIMIT 5", 1)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+   - GROUP BY
+     ex) QUERY(A1:D12, "SELECT A, SUM(D) GROUP BY A", 1)
+
+   - FORMAT (금액 포맷 지정)
+     ex) QUERY(A1:D12, "SELECT A, D FORMAT D '₩#,##0'", 1)
+
+   - OFFSET (몇 행 건너뛰기)
+     ex) QUERY(A1:D12, "SELECT A, D OFFSET 5", 1)
