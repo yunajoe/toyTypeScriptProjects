@@ -1,0 +1,39 @@
+.header {
+  background-color: green;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-bar .left {
+  display: flex;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+}
+.title-input {
+  display: flex;
+}
+.menu-bar {
+  background-color: red;
+}
+
+.excel-container {
+  background-color: blue;
+}
+
+.excel-header {
+  background-color: black;
+}
+
+.excel-body {
+  background-color: red;
+}
